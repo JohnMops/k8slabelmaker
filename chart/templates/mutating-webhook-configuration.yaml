@@ -1,0 +1,34 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: {{ include "service.fullname" . }}
+webhooks:
+  - name: {{ include "service.fullname" . }}.{{ .Release.Namespace }}.svc
+    clientConfig:
+      service:
+        namespace: {{ .Release.Namespace }}
+        name: {{ include "service.fullname" . }}
+        path: /label/deployment
+        port: 443
+      caBundle: >-
+        <your_ca_bundle>
+    rules:
+      - operations:
+          - UPDATE
+          - CREATE
+        apiGroups:
+          - '*'
+        apiVersions:
+          - '*'
+        resources:
+          - deployments
+          - statefulsets
+    failurePolicy: Fail
+    matchPolicy: Equivalent
+    objectSelector: {}
+    sideEffects: None
+    timeoutSeconds: 5
+    admissionReviewVersions:
+      - v1
+      - v1beta1
+    reinvocationPolicy: Never

@@ -1,0 +1,6 @@
+fastapi
+json
+uvicorn
+logging
+base54
+os
